@@ -7,7 +7,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 
 const axios = require('axios');
 // axios.defaults.baseURL = 'http://1.14.63.16:8080/api'
-// axios.defaults.baseURL = 'http://lintianle.cn:8080/api'
+axios.defaults.baseURL = 'https://lintianle.cn:8443'
 
 // axios.defaults.baseURL = 'http://localhost:8081/api'
 // axios.defaults.baseURL = '/api'

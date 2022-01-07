@@ -11,6 +11,12 @@ import TeacherAnnouncement from "@/components/TeacherAnnouncement";
 import TeacherProfile from "@/components/TeacherProfile";
 import StudentProfile from "@/components/StudentProfile";
 
+const originalPush = VueRouter.prototype.push
+
+VueRouter.prototype.push = function push(location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 Vue.use(VueRouter);
 
 const routes = [

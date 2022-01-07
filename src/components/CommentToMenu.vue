@@ -1,7 +1,7 @@
 <template>
     <div>
         <el-input v-model="input" placeholder="请输入内容"></el-input>
-        <el-button type="primary" @click="sendComment">Submit</el-button>
+        <el-button type="primary" @click="sendComment">提交</el-button>
     </div>
 </template>
 

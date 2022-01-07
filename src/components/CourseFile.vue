@@ -1,15 +1,15 @@
 <template>
     <el-card>
         <div v-if="fileType == 'video'">
-            <video width="1280" height="720" controls>
+            <video width="100%" controls>
                 <source :src="fileURL" type="video/mp4">
             </video>
         </div>
         <div v-else-if="fileType == 'pdf'">
-            <embed :src="fileURL" width="1280" height="1920" />
+            <embed :src="fileURL" width="100%" height="100%" />
         </div>
         <div v-else-if="fileType == 'slide'">
-            <iframe :src='pptxPluginURL' width='1280' height="720" />
+            <iframe :src='pptxPluginURL' width="100%" height="100%" />
         </div>
         <div v-else>
             <span>File Not Support</span>

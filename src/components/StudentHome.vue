@@ -1,7 +1,7 @@
 <template>
     <el-menu mode="horizontal" @select="handleSelect" router :default-active="activeIndex">
         <el-menu-item index="/studentProfile">
-                <el-avatar :src="'http://1.14.63.16:8080' + user.avatar"></el-avatar>
+                <el-avatar :src="'https://lintianle.cn:8443' + user.avatar"></el-avatar>
         </el-menu-item>
         <el-menu-item index="/studentCourse">Course</el-menu-item>
         <el-menu-item index="/studentHomework">Homework</el-menu-item>

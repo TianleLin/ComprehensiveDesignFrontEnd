@@ -1,16 +1,18 @@
 <template>
     <div>
         <TeacherHome></TeacherHome>
-        <el-button size="large" type="text" @click="createHomework">
-            新建作业
-        </el-button>
-        <el-input
-                type="textarea"
-                :rows="6"
-                placeholder="请输入新作业内容"
-                v-model="content2"
-        >
-        </el-input>
+        <div class="box-card">
+            <el-input
+                    type="textarea"
+                    :rows="5"
+                    placeholder="请输入新作业内容"
+                    v-model="content2"
+            >
+            </el-input>
+            <el-button type="primary" @click="createHomework">
+                提交
+            </el-button>
+        </div>
         <el-card v-for="home in homework" :key="home.homeworkID" class="box-card">
             <div slot="header" class="clearfix">
                 <span>{{ home.teacherName }}</span>
@@ -207,18 +209,19 @@
         margin-bottom: auto;
     }
 
-    .clearfix {
+    .clearfix{
         display: flex;
         /*justify-content: center;*/
         align-items: center;
     }
     .clearfix:before,
     .clearfix:after {
+
         display: table;
         content: "";
     }
     .clearfix:after {
-        clear: both;
+        clear: both
     }
 
     .box-card {

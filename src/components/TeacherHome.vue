@@ -15,7 +15,7 @@
         components: {},
         data: function () {
             return {
-                baseURL : 'http://1.14.63.16:8080',
+                baseURL : 'https://lintianle.cn:8443',
                 avatarURL : '',
                 user : {
                     sessionId: "",

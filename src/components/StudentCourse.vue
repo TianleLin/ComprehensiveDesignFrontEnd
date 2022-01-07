@@ -6,7 +6,7 @@
                 <el-tree default-expand-all class="tree" :data="menus" :props="defaultProps" @node-click="handleNodeClick"></el-tree>
             </el-aside>
             <el-main v-if="nodeClicked">
-                <CourseFile :fileType="fileType" :fileURL="'http://1.14.63.16:8080'+fileURL"></CourseFile>
+                <CourseFile :fileType="fileType" :fileURL="'https://lintianle.cn:8443' + fileURL"></CourseFile>
                 <el-card>
                     <CommentToMenu :three-level-menu-i-d="threeLevelMenuID"></CommentToMenu>
                 </el-card>
@@ -126,7 +126,11 @@
                     console.log(this.threeLevelMenuID)
                     this.fileURL = data.fileURL;
                     this.fileType = data.fileType
-                    this.nodeClicked = true;
+                    // this.nodeClicked = true;
+                    this.nodeClicked = false
+                    this.$nextTick(() => {
+                        this.nodeClicked = true
+                    })
                     // console.log(this.fileType)
                     // console.log(this.fileURL)
                 }

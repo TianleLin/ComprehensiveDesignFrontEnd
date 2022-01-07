@@ -28,8 +28,15 @@
             <!--        <UploadVideo :dialogVisible="this.dialogVisible" :title="this.videoTitle" :parentID="this.videoParentID" @refresh='bindShow'></UploadVideo>-->
                 </div>
             </el-aside>
-            <el-main>
-                <CourseFile :fileType="fileType" :fileURL="'http://1.14.63.16:8080'+fileURL"></CourseFile>
+            <el-main v-if="nodeClicked">
+                <CourseFile :fileType="fileType" :fileURL="'https://lintianle.cn:8443' + fileURL"></CourseFile>
+                <el-card>
+                    <CommentToMenu :three-level-menu-i-d="threeLevelMenuID"></CommentToMenu>
+                </el-card>
+                <el-card v-for="comment in comment" :key="comment.commentID">
+                    <!--                        {{comment.content}}-->
+                    <Comment v-if="commentFlag" :likeList="likeList" :comment="comment"></Comment>
+                </el-card>
             </el-main>
         </el-container>
     </div>
@@ -39,11 +46,14 @@
     import TeacherHome from "@/components/TeacherHome";
     import UploadVideo from "@/components/UploadVideo";
     import CourseFile from "@/components/CourseFile";
+    import CommentToMenu from "@/components/CommentToMenu";
+    import Comment from "@/components/Comment";
+    import StudentHome from "@/components/StudentHome";
     let id = 1000;
     var vedioID = 1;
     export default {
         name: "TeacherCourse",
-        components: {CourseFile, UploadVideo, TeacherHome},
+        components: {CommentToMenu, Comment, CourseFile, UploadVideo, TeacherHome},
         data() {
             return {
                 menus: [
@@ -59,6 +69,19 @@
                 videoParentID:"",
                 fileURL : '',
                 fileType : '',
+                nodeClicked : false,
+                user : {
+                    sessionId: "",
+                    avatar: "",
+                    id: 0,
+                    password: "",
+                    teacher: false,
+                    username: ""
+                },
+                threeLevelMenuID : 0,
+                comment: [],
+                commentFlag:true,
+                likeList:[],
             };
         },
         watch: {
@@ -80,25 +103,123 @@
                 console.log("oldVal:", oldVal);
                 console.log("newVal:", newVal);
             },
+            threeLevelMenuID :
+                async function (newValue, oldValue){
+                    await this.$axios
+                        .get('/api/getCommentOrReplyIDLikedByThreeLevelMenuIDAndUserID', {
+                            params:{
+                                threeLevelMenuID: newValue,
+                                userID: this.user.id,
+                            }
+                        })
+                        .then((response) => {
+                            console.log(response)
+                            this.likeList = response.data;
+                            console.log("like"+this.likeList)
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                    await this.$axios
+                        .get('/api/getCommentAndReplyByThreeLevelMenuID', {
+                            params:{
+                                threeLevelMenuID: newValue
+                            }
+                        })
+                        .then((response) => {
+                            this.$store.commit('setThreeLevelMenuID', newValue)
+                            console.log(response)
+                            this.comment = response.data
+                            console.log(this.comment)
+                        })
+                        .catch((error) => {
+                            console.log(error)
+                        })
+                    console.log(this.user.id)
+                },
+            refreshFlag : async function () {
+                this.comment = false
+                await this.$axios
+                    .get('/api/getCommentAndReplyByThreeLevelMenuID', {
+                        params:{
+                            threeLevelMenuID: this.threeLevelMenuID
+                        }
+                    })
+                    .then((response) => {
+                        console.log(response)
+                        this.comment = response.data
+                        console.log(this.comment)
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                    })
+                this.$nextTick(() => {
+                    this.commentFlag = true
+                })
+
+            },
         },
         //页面初始化
         created() {
             this.user = JSON.parse(localStorage.getItem("user"));
             console.log(this.user.id);
             //获取章节信息树
-            this.$axios
-                .get("/api/getAllMenu")
-                .then((response) => {
-                    console.log(response);
-                    this.menus = response.data;
-                })
-                .catch((error) => {
-                    console.log(error);
-                    this.$message.error("Internet Error!");
-                });
+            // this.$axios
+            //     .get("/api/getAllMenu")
+            //     .then((response) => {
+            //         console.log(response);
+            //         this.menus = response.data;
+            //     })
+            //     .catch((error) => {
+            //         console.log(error);
+            //         this.$message.error("Internet Error!");
+            //     });
+            this.getAllMenu();
+            this.getLikeList();
+            console.log("likeList"+this.likeList)
+            for (let menusKey in this.menus) {
+                menusKey.fileURL = this.baseURL + menusKey.fileURL;
+            }
         },
 
         methods: {
+            async getAllMenu() {
+                await this.$axios
+                    .get('/api/getAllMenu')
+                    .then((response) => {
+                        console.log(response)
+                        this.menus = response.data;
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                        if(error.response.status===401) {
+                            this.$router.push({name: 'Login', query: {redirect: '/studentCourse'}});
+                            this.$message.info("请先登录")
+                        }
+                    })
+            },
+            async getLikeList() {
+                console.log(this.user.id)
+                await this.$axios
+                    .get('/api/getCommentOrReplyIDLikedByThreeLevelMenuIDAndUserID', {
+                        params:{
+                            threeLevelMenuID: this.threeLevelMenuID,
+                            userID: this.user.id,
+                        }
+                    })
+                    .then((response) => {
+                        console.log(response)
+                        this.likeList = response.data;
+                        console.log(this.likeList)
+                    })
+                    .catch((error) => {
+                        console.log(error)
+                        if(error.response.status===401) {
+                            this.$router.push({name: 'Login', query: {redirect: '/studentCourse'}});
+                            this.$message.info("请先登录")
+                        }
+                    })
+            },
             bindShow(data){
                 this.dialogVisible=data;
             },
@@ -106,9 +227,14 @@
             handleNodeClick(data) {
                 console.log(data);
                 if (data.threeLevelMenuID !== undefined) {
+                    this.threeLevelMenuID = data.threeLevelMenuID;
                     this.fileURL = data.fileURL;
                     this.fileType = data.fileType;
-                    this.nodeClicked = true;
+                    // this.nodeClicked = true;
+                    this.nodeClicked = false
+                    this.$nextTick(() => {
+                        this.nodeClicked = true
+                    })
                     console.log(this.fileType);
                     console.log(this.fileURL);
                 }
@@ -433,10 +559,32 @@
                 }
             },
         },
+        computed:{
+            refreshFlag: {
+                get(){
+                    return this.$store.state.refreshFlag;
+                },
+                set(){
+                    return this.$store.commit('setRefresh')
+                }
+            },
+        },
     }
 </script>
 
 <style scoped>
+    .tree {
+        margin-left: 50px;
+    }
+    .el-aside {
+        width: auto;
+    }
+    .comment{
+        /*margin-left: 50px;*/
+    }
+    .el-card{
+        text-align: left;
+    }
     #loginBox {
         display: none;
     }

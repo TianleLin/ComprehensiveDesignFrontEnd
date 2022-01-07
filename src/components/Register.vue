@@ -75,17 +75,15 @@
                                 type: 'success'
                             })
                             this.$router.push({path:'/login'})
+                        } else if(response.status == 208){
+                            this.$message.error('用户已存在')
                         }
                     })
                     .catch((error) => {
                         console.log(error)
                         if(error.response == 400){
                             this.$message.error('不能为空')
-                        } else if(error.response == 208){
-                            this.$message.error('用户已存在')
-                        } else if(error.response == 208){
-                            this.$message.error('用户已存在')
-                        }else
+                        } else
                             this.$message.error('失败！')
                     })
             },

@@ -2,7 +2,7 @@
   <div>
       <StudentHome></StudentHome>
       <el-card class="box-card">
-          <el-avatar :src="'http://1.14.63.16:8080' + user.avatar"></el-avatar>
+          <el-avatar :src="'https://lintianle.cn:8443' + user.avatar"></el-avatar>
       <el-container>
       <el-descriptions title="个人资料">
         <el-descriptions-item label="用户名">{{user.username}}</el-descriptions-item>

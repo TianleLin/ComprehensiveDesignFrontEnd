@@ -9,7 +9,7 @@
                 v-model="textarea"
         >
         </el-input>
-        <el-button type="primary" @click="createHomework">Submit</el-button>
+        <el-button type="primary" @click="createHomework">提交</el-button>
         </div>
         <Announcement v-if="showAnnouncement" :teacher="true" ></Announcement>
 

@@ -1,7 +1,7 @@
 <template>
     <div class="comment">
         <el-card>
-            <el-avatar :src="'http://1.14.63.16:8080' + comment.avatar"></el-avatar>
+            <el-avatar :src="'https://lintianle.cn:8443' + comment.avatar"></el-avatar>
             <div class="author-info">
                 <span class="author-name">{{comment.username}}</span>
                 <span class="author-time">{{comment.timeUpdatedAt}}</span>
